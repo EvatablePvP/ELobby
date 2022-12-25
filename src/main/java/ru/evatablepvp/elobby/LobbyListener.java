@@ -1,3 +1,19 @@
+/*
+ * Copyright 2022 EvatablePvP
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package ru.evatablepvp.elobby;
 
 import lombok.RequiredArgsConstructor;
@@ -16,15 +32,21 @@ import org.bukkit.event.player.*;
 
 /**
  * Основной слушатель плагина ELobby.
+ * 
  * @author iEatMeat
  */
 @RequiredArgsConstructor
 public class LobbyListener implements Listener {
-    private final Main plugin;
+    private final Main main;
+
+    @EventHandler
+    public void playerJoinEvent(PlayerJoinEvent e) {
+        e.getPlayer().teleport(main.getLobby());
+    }
 
     @EventHandler
     public void blockPlaceEvent(BlockPlaceEvent e) {
-        if (plugin.getProtectedWorlds().contains(e.getPlayer().getWorld())
+        if (main.getProtectedWorlds().contains(e.getPlayer().getWorld())
                 && (e.getPlayer().getGameMode() != GameMode.CREATIVE
                         || !e.getPlayer().hasPermission("elobby.modify"))) {
             e.setCancelled(true);
@@ -33,7 +55,7 @@ public class LobbyListener implements Listener {
 
     @EventHandler
     public void blockBreakEvent(BlockBreakEvent e) {
-        if (plugin.getProtectedWorlds().contains(e.getPlayer().getWorld())
+        if (main.getProtectedWorlds().contains(e.getPlayer().getWorld())
                 && (e.getPlayer().getGameMode() != GameMode.CREATIVE
                         || !e.getPlayer().hasPermission("elobby.modify"))) {
             e.setCancelled(true);
@@ -42,7 +64,7 @@ public class LobbyListener implements Listener {
 
     @EventHandler
     public void playerInteractEvent(PlayerInteractEvent e) {
-        if (plugin.getProtectedWorlds().contains(e.getPlayer().getWorld())) {
+        if (main.getProtectedWorlds().contains(e.getPlayer().getWorld())) {
             if (e.getAction() == Action.PHYSICAL) {
                 e.setCancelled(true);
             } else if ((e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK)
@@ -56,10 +78,10 @@ public class LobbyListener implements Listener {
     @EventHandler
     public void entityDamageEvent(EntityDamageEvent e) {
         if (e.getEntityType() == EntityType.PLAYER) {
-            if (e.getCause() == DamageCause.VOID && plugin.getVoidTeleports().containsKey(e.getEntity().getWorld())) {
+            if (e.getCause() == DamageCause.VOID && main.getVoidTeleports().containsKey(e.getEntity().getWorld())) {
                 e.setCancelled(true);
-                e.getEntity().teleport(plugin.getVoidTeleports().get(e.getEntity().getWorld()));
-            } else if (plugin.getProtectedWorlds().contains(e.getEntity().getWorld())) {
+                e.getEntity().teleport(main.getVoidTeleports().get(e.getEntity().getWorld()));
+            } else if (main.getProtectedWorlds().contains(e.getEntity().getWorld())) {
                 e.setCancelled(true);
             }
         }
@@ -67,21 +89,21 @@ public class LobbyListener implements Listener {
 
     @EventHandler
     public void foodLevelChangeEvent(FoodLevelChangeEvent e) {
-        if (plugin.getProtectedWorlds().contains(e.getEntity().getWorld())) {
+        if (main.getProtectedWorlds().contains(e.getEntity().getWorld())) {
             e.setFoodLevel(20);
         }
     }
 
     @EventHandler
     public void playerDropItemEvent(PlayerDropItemEvent e) {
-        if (plugin.getProtectedWorlds().contains(e.getPlayer().getWorld())) {
+        if (main.getProtectedWorlds().contains(e.getPlayer().getWorld())) {
             e.getItemDrop().remove();
         }
     }
 
     @EventHandler
     public void playerInteractEntityEvent(PlayerInteractEntityEvent e) {
-        if (plugin.getProtectedWorlds().contains(e.getPlayer().getWorld())
+        if (main.getProtectedWorlds().contains(e.getPlayer().getWorld())
                 && (e.getPlayer().getGameMode() != GameMode.CREATIVE
                         || !e.getPlayer().hasPermission("elobby.modify"))) {
             e.setCancelled(true);
@@ -90,7 +112,7 @@ public class LobbyListener implements Listener {
 
     @EventHandler
     public void playerInteractAtEntityEvent(PlayerInteractAtEntityEvent e) {
-        if (plugin.getProtectedWorlds().contains(e.getPlayer().getWorld())
+        if (main.getProtectedWorlds().contains(e.getPlayer().getWorld())
                 && (e.getPlayer().getGameMode() != GameMode.CREATIVE
                         || !e.getPlayer().hasPermission("elobby.modify"))) {
             e.setCancelled(true);
@@ -99,7 +121,7 @@ public class LobbyListener implements Listener {
 
     @EventHandler
     public void playerDeathEvent(PlayerDeathEvent e) {
-        if (plugin.getProtectedWorlds().contains(e.getEntity().getWorld())) {
+        if (main.getProtectedWorlds().contains(e.getEntity().getWorld())) {
             e.setDeathMessage(null);
             e.setDroppedExp(0);
             e.getDrops().clear();
@@ -108,8 +130,8 @@ public class LobbyListener implements Listener {
 
     @EventHandler
     public void playerMoveEvent(PlayerMoveEvent e) {
-        if (plugin.getWorldBounds().containsKey(e.getTo().getWorld())) {
-            WorldBound wb = plugin.getWorldBounds().get(e.getTo().getWorld());
+        if (main.getWorldBounds().containsKey(e.getTo().getWorld())) {
+            WorldBound wb = main.getWorldBounds().get(e.getTo().getWorld());
             if (!wb.isInBound(e.getTo())) {
                 e.setTo(wb.getExit());
             }

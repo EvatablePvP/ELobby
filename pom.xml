@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.evatablepvp.elobby</groupId>
     <artifactId>elobby</artifactId>
-    <version>0.1.1-SNAPSHOT</version>
+    <version>0.1.2-SNAPSHOT</version>
     <name>ELobby</name>
     <description>Лобби плагин для сервера EvatablePvP</description>
     <url>https://evatablepvp.ru/</url>
