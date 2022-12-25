@@ -1,0 +1,17 @@
+name: ELobby
+version: 0.1.1-SNAPSHOT
+website: 'https://evatablepvp.ru/'
+description: 'Лобби плагин для сервера EvatablePvP'
+authors: [iEatMeat]
+main: ru.evatablepvp.elobby.Main
+softdepend: [PhantomWorlds]
+api-version: 1.13
+commands:
+  elobby:
+    usage: '/elobby [reload]'
+    description: 'Управляет плагином ELobby'
+  lobby:
+    usage: /lobby
+    description: 'Выкидывает в лобби'
+    permission: elobby.lobby
+    aliases: hub
